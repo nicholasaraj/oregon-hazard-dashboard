@@ -171,5 +171,14 @@ if show_landslides:
         ).add_to(fg)
     fg.add_to(m)
 
+# === Safe Zone Marker ===
+safe_zone_coords = [43.096224, -119.104619]
+folium.Marker(
+    location=safe_zone_coords,
+    icon=folium.Icon(icon="star", prefix="fa", color="green"),
+    tooltip="Safe Area",
+    popup="Safe Area: Southeastern Oregon"
+).add_to(m)
+
 folium.LayerControl().add_to(m)
 st_folium(m, width=1300, height=700)
