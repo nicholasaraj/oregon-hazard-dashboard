@@ -3,6 +3,9 @@ import folium
 import geopandas as gpd
 import pandas as pd
 from streamlit_folium import st_folium
+import tempfile
+import requests
+import gdown
 
 # --- Streamlit setup ---
 st.set_page_config(layout="wide")
@@ -22,9 +25,20 @@ st.title("Oregon Precipitation, Wildfires, and Landslides")
 
 @st.cache_data
 def load_data():
-    counties = pd.read_csv("oregon_combined.csv")
-    landslides = gpd.read_file("landslides_sf.geojson")
-    fires = gpd.read_file("fires_sf.geojson")
+    def download_from_drive(file_id):
+        output = tempfile.NamedTemporaryFile(delete=False, suffix=".geojson")
+        gdown.download(id=file_id, output=output.name, quiet=True)
+        return output.name
+
+    # Google Drive File IDs
+    county_csv_id = "1Af6Xh3ugLx_jAeQc1qPOOe-szzADKTX_"
+    landslide_geojson_id = "1j5xOYXjNY9E1wequhjE-vxBLA8_WgVdj"
+    fire_geojson_id = "1zQmcVrtqCU_RzZcrZzPTxZCoJXMbIob7"
+
+    counties = pd.read_csv(f"https://drive.google.com/uc?export=download&id={county_csv_id}")
+    landslides = gpd.read_file(download_from_drive(landslide_geojson_id))
+    fires = gpd.read_file(download_from_drive(fire_geojson_id))
+
     return counties, landslides, fires
 
 counties, landslides, fires = load_data()
